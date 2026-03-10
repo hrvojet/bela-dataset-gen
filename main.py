@@ -174,6 +174,11 @@ def main():
     if not card_samples:
         raise RuntimeError("No card PNG files found.")
 
+    cards_cache = []
+    for img_path, class_id in card_samples:
+        img = Image.open(img_path).convert("RGBA")
+        cards_cache.append((img, class_id))
+
     print("Classes:")
     for k, v in class_map.items():
         print(f"  {v}: {k}")
@@ -185,13 +190,13 @@ def main():
         bg_rgba = bg.convert("RGBA")
 
         n_cards = random.randint(MIN_CARDS_PER_IMAGE, MAX_CARDS_PER_IMAGE)
-        chosen = random.sample(card_samples, k=min(n_cards, len(card_samples)))
+        chosen = random.sample(cards_cache, k=min(n_cards, len(cards_cache)))
 
         labels = []
         placed_boxes = []
 
         for card_path, class_id in chosen:
-            card = load_rgba(card_path)
+            card = card_path.copy()
             card = augment_card(card, bg_rgba.width, bg_rgba.height)
 
             placement = place_card(bg_rgba, card, placed_boxes)
