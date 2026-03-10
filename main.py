@@ -164,7 +164,6 @@ def place_card(bg, card_rgba, existing_boxes):
 # MAIN
 # =========================
 def main():
-    start = time.time()
     ensure_dirs()
     backgrounds = list_backgrounds()
     class_map, card_samples = build_class_map()
@@ -179,6 +178,15 @@ def main():
         img = Image.open(img_path).convert("RGBA")
         cards_cache.append((img, class_id))
 
+    backgrounds_cache = []
+    for bg_path in backgrounds:
+        bg = Image.open(bg_path).convert("RGBA")
+        backgrounds_cache.append(bg)
+
+    print("Cached Cards:", len(cards_cache))
+    print("Cached backgrounds:", len(backgrounds_cache))
+    start = time.time()
+
     print("Classes:")
     for k, v in class_map.items():
         print(f"  {v}: {k}")
@@ -186,7 +194,8 @@ def main():
     for i in range(NUM_IMAGES):
         split = "train" if random.random() < TRAIN_SPLIT else "val"
 
-        bg = random_background(backgrounds)
+        bg = random.choice(backgrounds_cache).copy()
+        bg = resize_background(bg)
         bg_rgba = bg.convert("RGBA")
 
         n_cards = random.randint(MIN_CARDS_PER_IMAGE, MAX_CARDS_PER_IMAGE)
