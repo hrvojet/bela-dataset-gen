@@ -1,6 +1,7 @@
 import os
 import random
 import math
+import time
 from pathlib import Path
 from PIL import Image, ImageEnhance, ImageFilter
 
@@ -13,7 +14,7 @@ OUTPUT_DIR = Path("output")
 
 IMAGE_SIZE = (1280, 720)
 TRAIN_SPLIT = 0.9
-NUM_IMAGES = 5
+NUM_IMAGES = 50
 
 MIN_CARDS_PER_IMAGE = 1
 MAX_CARDS_PER_IMAGE = 4
@@ -22,7 +23,7 @@ SCALE_RANGE = (0.18, 0.38)   # relative to background width
 ROTATION_RANGE = (-25, 25)
 MAX_TRIES_PER_CARD = 30
 
-JPEG_QUALITY = 75
+JPEG_QUALITY = 80
 
 random.seed(42)
 
@@ -163,6 +164,7 @@ def place_card(bg, card_rgba, existing_boxes):
 # MAIN
 # =========================
 def main():
+    start = time.time()
     ensure_dirs()
     backgrounds = list_backgrounds()
     class_map, card_samples = build_class_map()
@@ -214,13 +216,15 @@ def main():
         img_path = OUTPUT_DIR / "images" / split / f"{stem}.jpg"
         lbl_path = OUTPUT_DIR / "labels" / split / f"{stem}.txt"
 
-        final_img.save(img_path, quality=JPEG_QUALITY)
+        final_img.save(img_path, quality=JPEG_QUALITY, optimize=False)
         with open(lbl_path, "w", encoding="utf-8") as f:
             f.write("\n".join(labels))
 
     print("\nDone.")
     print(f"Images saved to: {OUTPUT_DIR / 'images'}")
     print(f"Labels saved to: {OUTPUT_DIR / 'labels'}")
+    end = time.time()
+    print("\nRuntime: ", end - start, " seconds")
 
 if __name__ == "__main__":
     main()
