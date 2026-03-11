@@ -1,6 +1,6 @@
 # Hungarian Card Dataset Generator
 
-This project generates a synthetic dataset of Hungarian (Belote) playing cards for training object detection models with the [Darknet / YOLO](https://codeberg.org/CCodeRun/darknet/) framework.
+This project (inefficiently) generates a synthetic dataset of Hungarian (Belote) playing cards for training object detection models with the [Darknet / YOLO](https://codeberg.org/CCodeRun/darknet/) framework.
 
 The generator places cropped card images onto random background textures, applies random transformations (scale, rotation, placement), and produces:
 
