@@ -52,9 +52,9 @@ def load_cards_to_memory(card_samples):
 def load_bg_to_memory(backgrounds):
     bg_mem = []
     el_no = len(backgrounds)
-    q = el_no / 8
+    oct_part = el_no / 8
     for i, bg_path in enumerate(backgrounds):
-        if i % q == 0 and i != 0:
+        if i % oct_part == 0 and i != 0:
             print(i, "out of ", el_no, " backgrounds loaded")
         bg = Image.open(bg_path).convert("RGBA")
         bg = resize_background(bg)
@@ -207,7 +207,11 @@ def main():
     for k, v in class_map.items():
         print(f"  {v}: {k}")
 
+    oct_part = NUM_IMAGES / 8
     for i in range(NUM_IMAGES):
+        if i % oct_part == 0 and i != 0:
+            print(i, "out of ", i, " images generated")
+
         split = "train" if random.random() < TRAIN_SPLIT else "val"
 
         bg = random.choice(backgrounds_cache).copy()
