@@ -39,6 +39,29 @@ def list_backgrounds():
     exts = {".jpg", ".jpeg", ".png", ".webp"}
     return [p for p in BACKGROUNDS_DIR.rglob("*") if p.suffix.lower() in exts]
 
+
+def load_cards_to_memory(card_samples):
+    cc = []
+    for img_path, class_id in card_samples:
+        img = Image.open(img_path).convert("RGBA")
+        cc.append((img, class_id))
+
+    return cc
+
+
+def load_bg_to_memory(backgrounds):
+    bg_mem = []
+    el_no = len(backgrounds)
+    q = el_no / 8
+    for i, bg_path in enumerate(backgrounds):
+        if i % q == 0 and i != 0:
+            print(i, "out of ", el_no, " backgrounds loaded")
+        bg = Image.open(bg_path).convert("RGBA")
+        bg = resize_background(bg)
+        bg_mem.append(bg)
+
+    return bg_mem
+
 def build_class_map():
     """
     Assumes each subfolder in CARDS_DIR is one class.
@@ -173,15 +196,8 @@ def main():
     if not card_samples:
         raise RuntimeError("No card PNG files found.")
 
-    cards_cache = []
-    for img_path, class_id in card_samples:
-        img = Image.open(img_path).convert("RGBA")
-        cards_cache.append((img, class_id))
-
-    backgrounds_cache = []
-    for bg_path in backgrounds:
-        bg = Image.open(bg_path).convert("RGBA")
-        backgrounds_cache.append(bg)
+    cards_cache = load_cards_to_memory(card_samples)
+    backgrounds_cache = load_bg_to_memory(backgrounds)
 
     print("Cached Cards:", len(cards_cache))
     print("Cached backgrounds:", len(backgrounds_cache))
@@ -195,7 +211,6 @@ def main():
         split = "train" if random.random() < TRAIN_SPLIT else "val"
 
         bg = random.choice(backgrounds_cache).copy()
-        bg = resize_background(bg)
         bg_rgba = bg.convert("RGBA")
 
         n_cards = random.randint(MIN_CARDS_PER_IMAGE, MAX_CARDS_PER_IMAGE)
