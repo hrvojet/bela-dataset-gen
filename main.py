@@ -25,7 +25,7 @@ MAX_TRIES_PER_CARD = 30
 
 JPEG_QUALITY = 80
 
-random.seed(42)
+random.seed()
 
 # =========================
 # HELPERS
