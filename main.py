@@ -3,6 +3,7 @@ import random
 import math
 import time
 from pathlib import Path
+from tqdm import tqdm
 from PIL import Image, ImageEnhance, ImageFilter
 
 # =========================
@@ -51,15 +52,13 @@ def load_cards_to_memory(card_samples):
 
 def load_bg_to_memory(backgrounds):
     bg_mem = []
-    el_no = len(backgrounds)
-    oct_part = el_no / 8
-    for i, bg_path in enumerate(backgrounds):
-        if i % oct_part == 0 and i != 0:
-            print(i, "out of ", el_no, " backgrounds loaded")
+    print('Loading background to memory')
+    for i, bg_path in enumerate(tqdm(backgrounds)):
         bg = Image.open(bg_path).convert("RGBA")
         bg = resize_background(bg)
         bg_mem.append(bg)
 
+    print('Background loaded')
     return bg_mem
 
 def build_class_map():
@@ -207,10 +206,8 @@ def main():
     for k, v in class_map.items():
         print(f"  {v}: {k}")
 
-    oct_part = NUM_IMAGES / 8
-    for i in range(NUM_IMAGES):
-        if i % oct_part == 0 and i != 0:
-            print(i, "out of ", i, " images generated")
+    print('Generating images...')
+    for i in tqdm(range(NUM_IMAGES)):
 
         split = "train" if random.random() < TRAIN_SPLIT else "val"
 
