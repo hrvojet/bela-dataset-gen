@@ -75,3 +75,9 @@ output/
 ```
 
 Each generated image has a corresponding YOLO label file containing bounding boxes and class IDs.
+
+## Bounding Box Verification
+
+The repository also includes a small helper script `verify-bb.py` used to visually verify YOLO annotations.
+
+The script loads a generated image and its corresponding label file and draws the bounding boxes on top of the image using OpenCV.
