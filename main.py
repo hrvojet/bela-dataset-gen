@@ -1,10 +1,9 @@
-import os
 import random
-import math
 import time
 from pathlib import Path
-from tqdm import tqdm
+
 from PIL import Image, ImageEnhance, ImageFilter
+from tqdm import tqdm
 
 # =========================
 # CONFIG
@@ -38,6 +37,7 @@ def ensure_dirs():
         (OUTPUT_DIR / "images" / split).mkdir(parents=True, exist_ok=True)
         (OUTPUT_DIR / "labels" / split).mkdir(parents=True, exist_ok=True)
 
+
 def list_backgrounds():
     exts = {".jpg", ".jpeg", ".png", ".webp"}
     backgrounds = [p for p in BACKGROUNDS_DIR.rglob("*") if p.suffix.lower() in exts]
@@ -69,6 +69,7 @@ def load_bg_to_memory(backgrounds):
     print('Background loaded')
     return bg_mem
 
+
 def build_class_map():
     """
     Assumes each subfolder in CARDS_DIR is one class.
@@ -90,16 +91,20 @@ def build_class_map():
 
     return class_map, samples
 
+
 def load_rgba(path):
     return Image.open(path).convert("RGBA")
 
+
 def resize_background(bg):
     return bg.resize(IMAGE_SIZE, Image.Resampling.LANCZOS).convert("RGB")
+
 
 def random_background(backgrounds):
     bg_path = random.choice(backgrounds)
     bg = Image.open(bg_path).convert("RGB")
     return resize_background(bg)
+
 
 def augment_card(card_rgba, bg_w, bg_h):
     # Random scale based on background width
@@ -127,6 +132,7 @@ def augment_card(card_rgba, bg_w, bg_h):
 
     return card
 
+
 def bbox_from_alpha(card_rgba, x, y):
     """
     Returns visible bounding box from alpha channel after placement.
@@ -138,6 +144,7 @@ def bbox_from_alpha(card_rgba, x, y):
 
     left, top, right, bottom = bbox
     return (x + left, y + top, x + right, y + bottom)
+
 
 def iou(box1, box2):
     x1 = max(box1[0], box2[0])
@@ -157,6 +164,7 @@ def iou(box1, box2):
         return 0
     return inter / union
 
+
 def yolo_line(class_id, box, img_w, img_h):
     x1, y1, x2, y2 = box
     cx = ((x1 + x2) / 2) / img_w
@@ -164,6 +172,7 @@ def yolo_line(class_id, box, img_w, img_h):
     w = (x2 - x1) / img_w
     h = (y2 - y1) / img_h
     return f"{class_id} {cx:.6f} {cy:.6f} {w:.6f} {h:.6f}"
+
 
 def place_card(bg, card_rgba, existing_boxes):
     bg_w, bg_h = bg.size
@@ -189,6 +198,7 @@ def place_card(bg, card_rgba, existing_boxes):
         return x, y, box
 
     return None
+
 
 # =========================
 # MAIN
