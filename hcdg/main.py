@@ -8,9 +8,10 @@ from tqdm import tqdm
 # =========================
 # CONFIG
 # =========================
-CARDS_DIR = Path("dataset_source/cards")
-BACKGROUNDS_DIR = Path("dataset_source/backgrounds")
-OUTPUT_DIR = Path("output")
+BASE_DIR = Path(__file__).resolve().parent.parent
+CARDS_DIR = BASE_DIR / "dataset_source" / "cards"
+BACKGROUNDS_DIR = BASE_DIR / "dataset_source" / "backgrounds"
+OUTPUT_DIR = BASE_DIR / "output"
 
 IMAGE_SIZE = (1280, 720)
 TRAIN_SPLIT = 0.9
@@ -33,7 +34,7 @@ random.seed(42)
 # HELPERS
 # =========================
 def ensure_dirs():
-    for split in ["train", "val"]:
+    for split in ["train", "valid"]:
         (OUTPUT_DIR / "images" / split).mkdir(parents=True, exist_ok=True)
         (OUTPUT_DIR / "labels" / split).mkdir(parents=True, exist_ok=True)
 
@@ -230,7 +231,7 @@ def main():
     print('Generating images...')
     for i in tqdm(range(NUM_IMAGES)):
 
-        split = "train" if random.random() < TRAIN_SPLIT else "val"
+        split = "train" if random.random() < TRAIN_SPLIT else "valid"
 
         bg = random.choice(backgrounds_cache).copy()
         bg_rgba = bg.convert("RGBA")
