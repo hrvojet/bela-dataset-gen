@@ -16,6 +16,7 @@ OUTPUT_DIR = Path("output")
 IMAGE_SIZE = (1280, 720)
 TRAIN_SPLIT = 0.9
 NUM_IMAGES = 50
+NEGATIVE_SAMPLE_PERCENT = 50
 BG_SAMPLE_LIMIT = 2 # Percentage, 0 - use all
 
 MIN_CARDS_PER_IMAGE = 1
@@ -213,6 +214,9 @@ def main():
     for k, v in class_map.items():
         print(f"  {v}: {k}")
 
+    num_negative = int(NUM_IMAGES * NEGATIVE_SAMPLE_PERCENT / 100)
+    negative_indices = set(random.sample(range(NUM_IMAGES), num_negative))
+
     print('Generating images...')
     for i in tqdm(range(NUM_IMAGES)):
 
@@ -227,22 +231,24 @@ def main():
         labels = []
         placed_boxes = []
 
-        for card_path, class_id in chosen:
-            card = card_path.copy()
-            card = augment_card(card, bg_rgba.width, bg_rgba.height)
+        is_negative = i in negative_indices
 
-            placement = place_card(bg_rgba, card, placed_boxes)
-            if placement is None:
-                continue
+        if not is_negative:
+            n_cards = random.randint(MIN_CARDS_PER_IMAGE, MAX_CARDS_PER_IMAGE)
+            chosen = random.sample(cards_cache, k=min(n_cards, len(cards_cache)))
 
-            x, y, box = placement
-            bg_rgba.alpha_composite(card, (x, y))
-            placed_boxes.append(box)
-            labels.append(yolo_line(class_id, box, bg_rgba.width, bg_rgba.height))
+            for card_path, class_id in chosen:
+                card = card_path.copy()
+                card = augment_card(card, bg_rgba.width, bg_rgba.height)
 
-        # skip empty image
-        if not labels:
-            continue
+                placement = place_card(bg_rgba, card, placed_boxes)
+                if placement is None:
+                    continue
+
+                x, y, box = placement
+                bg_rgba.alpha_composite(card, (x, y))
+                placed_boxes.append(box)
+                labels.append(yolo_line(class_id, box, bg_rgba.width, bg_rgba.height))
 
         # Optional slight final image effects
         final_img = bg_rgba.convert("RGB")
