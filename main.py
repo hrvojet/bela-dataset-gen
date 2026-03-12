@@ -16,6 +16,7 @@ OUTPUT_DIR = Path("output")
 IMAGE_SIZE = (1280, 720)
 TRAIN_SPLIT = 0.9
 NUM_IMAGES = 50
+BG_SAMPLE_LIMIT = 2 # Percentage, 0 - use all
 
 MIN_CARDS_PER_IMAGE = 1
 MAX_CARDS_PER_IMAGE = 4
@@ -26,7 +27,7 @@ MAX_TRIES_PER_CARD = 30
 
 JPEG_QUALITY = 80
 
-random.seed()
+random.seed(42)
 
 # =========================
 # HELPERS
@@ -38,7 +39,13 @@ def ensure_dirs():
 
 def list_backgrounds():
     exts = {".jpg", ".jpeg", ".png", ".webp"}
-    return [p for p in BACKGROUNDS_DIR.rglob("*") if p.suffix.lower() in exts]
+    backgrounds = [p for p in BACKGROUNDS_DIR.rglob("*") if p.suffix.lower() in exts]
+    if BG_SAMPLE_LIMIT > 0:
+        n = max(1, int(len(backgrounds) * BG_SAMPLE_LIMIT / 100))
+        backgrounds = random.sample(backgrounds, n)
+
+    print("Using", len(backgrounds), " backgrounds")
+    return backgrounds
 
 
 def load_cards_to_memory(card_samples):
