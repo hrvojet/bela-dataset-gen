@@ -2,7 +2,7 @@ import cv2
 import os
 
 image_path = "output/images/train/img_000042.jpg"
-label_path = "output/labels/train/img_000042.txt"
+label_path = "output/images/train/img_000042.txt"
 
 img = cv2.imread(image_path)
 h, w = img.shape[:2]

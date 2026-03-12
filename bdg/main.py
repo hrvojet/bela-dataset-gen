@@ -11,7 +11,7 @@ from tqdm import tqdm
 BASE_DIR = Path(__file__).resolve().parent.parent
 CARDS_DIR = BASE_DIR / "dataset_source" / "cards"
 BACKGROUNDS_DIR = BASE_DIR / "dataset_source" / "backgrounds"
-OUTPUT_DIR = BASE_DIR / "output"
+OUTPUT_DIR = BASE_DIR / "output" # Todo unify labels and images
 
 IMAGE_SIZE = (1280, 720)
 TRAIN_SPLIT = 0.9
@@ -36,7 +36,6 @@ random.seed(42)
 def ensure_dirs():
     for split in ["train", "valid"]:
         (OUTPUT_DIR / "images" / split).mkdir(parents=True, exist_ok=True)
-        (OUTPUT_DIR / "labels" / split).mkdir(parents=True, exist_ok=True)
 
 
 def list_backgrounds():
@@ -268,7 +267,7 @@ def main():
 
         stem = f"img_{i:06d}"
         img_path = OUTPUT_DIR / "images" / split / f"{stem}.jpg"
-        lbl_path = OUTPUT_DIR / "labels" / split / f"{stem}.txt"
+        lbl_path = OUTPUT_DIR / "images" / split / f"{stem}.txt"
 
         final_img.save(img_path, quality=JPEG_QUALITY, optimize=False)
         with open(lbl_path, "w", encoding="utf-8") as f:
