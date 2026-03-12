@@ -67,11 +67,8 @@ The generator creates the following structure:
 ```bash
 output/
 ├── images/
-│   ├── train/
-│   └── val/
-└── labels/
     ├── train/
-    └── val/
+    └── valid/
 ```
 
 Each generated image has a corresponding YOLO label file containing bounding boxes and class IDs.
