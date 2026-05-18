@@ -34,9 +34,8 @@ dataset_source/
 │   │   └── 10k.png
 │   └── ...
 └── backgrounds/
-    ├── braided/
-    ├── bumpy/
-    ├── chequered/
+    ├── sub_dir/
+    ├── bg_image.jpg
     └── ...
 ```
 
@@ -46,18 +45,7 @@ Each card must be a cropped PNG with transparency and placed inside a directory 
 
 ### Backgrounds
 
-The backgrounds directory should contain random images used as scene backgrounds.
-
-Subdirectories are supported and recommended for organization.
-
-Example:
-```bash
-backgrounds/
-├── braided/
-├── bumpy/
-├── chequered/
-└── ...
-```
+The backgrounds directory should contain random images used as scene backgrounds. Subdirectories are supported.
 
 In this project the Describable Textures Dataset ([DTD](https://www.robots.ox.ac.uk/~vgg/data/dtd/)) was used, but any sufficiently varied set of images should work.
 
@@ -66,7 +54,7 @@ In this project the Describable Textures Dataset ([DTD](https://www.robots.ox.ac
 The generator creates the following structure:
 ```bash
 output/
-├── images/
+└── images/
     ├── train/
     └── valid/
 ```
